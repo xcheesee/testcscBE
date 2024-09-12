@@ -1,5 +1,9 @@
 # Backend Teste CSC
 
+## Objetivos
+
+Criação de uma API de gerenciamento de livros em Laravel, com a integração ao banco de dados MySQL e o consumo de API de terceiros, para exercitar e demonstrar minhas habilidades com tais ferramentas.
+
 **Pre-requisitos**
 * [PHP](https://www.php.net/)
 * [Composer](https://getcomposer.org/)

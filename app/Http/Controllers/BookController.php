@@ -7,6 +7,8 @@ use App\Models\Book;
 use App\Models\Author;
 use App\Http\Resources\BookResource;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StoreBookRequest;
 
 class BookController extends Controller
 {
@@ -15,13 +17,14 @@ class BookController extends Controller
      */
     public function index()
     {
-        return BookResource::collection(Book::all());
+        $books = Book::paginate(5);
+        return BookResource::collection($books);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {
         $book = new Book;
         $book->title = $request->title;
@@ -46,8 +49,8 @@ class BookController extends Controller
                     ])->get("{+endpoint}/{resource}/{key}")->object();
                     $newAuthor = new Author;
                     $newAuthor->name = $authorData->name ?? "N/A";
-                    $newAuthor->bio =  $authorData->bio ?? "N/A";
-                    $newAuthor->country = "N/A";
+                    $newAuthor->bio =  $authorData->bio->value ?? "N/A";
+                    $newAuthor->country = $authorData->birth_date ?? "N/A";
                     $newAuthor->key = $authorFound->docs[0]->key;
                     if($newAuthor->save()) {
                         $book->author_id = $newAuthor->id;
@@ -73,7 +76,7 @@ class BookController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StoreBookRequest $request, string $id)
     {
         $book = Book::find($id);
 
@@ -81,10 +84,10 @@ class BookController extends Controller
             return response()->json(['error' => true, 'data' => ['Livro nao encontrado'], 404]);
         }
 
-        $book->title = $request->title ?? "N/A";
-        $book->desc = $request->desc ?? "N/A";
-        $book->price = $request->price ?? 0;
-        $book->stock = $request->stock ?? 0;
+        $book->title = $request->title;
+        $book->desc = $request->desc;
+        $book->price = $request->price;
+        $book->stock = $request->stock;
 
         if($request->author != null) {
             $authorFound = Http::get("https://openlibrary.org/search/authors.json", [
@@ -103,8 +106,8 @@ class BookController extends Controller
                     ])->get("{+endpoint}/{resource}/{key}")->object();
                     $newAuthor = new Author;
                     $newAuthor->name = $authorData->name ?? "N/A";
-                    $newAuthor->bio =  $authorData->bio ?? "N/A";
-                    $newAuthor->country = "N/A";
+                    $newAuthor->bio =  $authorData->bio->value ?? "N/A";
+                    $newAuthor->country = $authorData->birth_date ?? "N/A";
                     $newAuthor->key = $authorFound->docs[0]->key;
                     if($newAuthor->save()) {
                         $book->author_id = $newAuthor->id;

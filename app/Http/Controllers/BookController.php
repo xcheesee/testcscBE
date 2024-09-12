@@ -9,6 +9,7 @@ use App\Http\Resources\BookResource;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreBookRequest;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class BookController extends Controller
 {
@@ -17,7 +18,10 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::paginate(5);
+        //$books = Book::paginate(5);
+        $books = QueryBuilder::for(Book::class)
+        ->allowedFilters('title')
+        ->paginate(5);
         return BookResource::collection($books);
     }
 

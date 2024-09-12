@@ -18,7 +18,7 @@ class BookResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'desc' => $this->desc,
-            'author' => $this->author ? new AuthorResource($this->author) : "N/A",
+            'author' => $this->author ? new AuthorResource($this->author) : null,
             'price' => $this->price,
             'stock' => $this->stock
         ];
